@@ -1,7 +1,16 @@
 from train import Train
+from test import Test
 import numpy as np
 
-train = Train()
+n = 11
+k = 5
 
-for i in range(5):
-	beta = train.solve(i+1)
+train = Train()
+test = Test()
+
+beta = np.zeros((k, n))
+
+for i in range(k):
+	beta[i] = train.solve(i+1)
+
+test.predict(beta, k)

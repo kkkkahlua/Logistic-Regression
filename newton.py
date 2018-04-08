@@ -4,14 +4,18 @@ import math
 class Newton():
 	m = 0
 	n = 0
-	EPS = 0.0001
+	cnt = 0
+	EPS = 0.001
+	upper = 100
 	mat = np.array((0,0))
 	vec = np.array((0))
 
 	def calc_p1(x, beta):
-		#print(np.dot(x, beta))
-		#print(x, beta, np.dot(x, beta))
-		temp = math.exp(np.dot(x, beta))
+		#print('x', x, 'beta', beta)
+		temp = np.dot(x, beta)
+		if (temp >= 675):
+			return 1.0
+		temp = math.exp(temp)
 		return temp / (1+temp)
 
 	def calc_deri_1(beta):
@@ -29,17 +33,17 @@ class Newton():
 			c[:,0] = Newton.mat[i]
 			r[0:] = Newton.mat[i]
 			p1 = Newton.calc_p1(Newton.mat[i], beta)
+		#	print(p1)
 			mat += np.dot(c, r) * p1 * (1-p1)
 		return mat
 
 	def close(x, y):
-		for i in range(Newton.n):
-			if (abs(x[i]-y[i]) > Newton.EPS):
-				return False
-		return True
+		return abs(x-y).all() < Newton.EPS
 
 	def recursion(beta):
-		ret = beta - np.dot(Newton.calc_deri_2(beta).T, Newton.calc_deri_1(beta))
+		deri_1 = Newton.calc_deri_1(beta)
+		deri_2 = Newton.calc_deri_2(beta)
+		ret = beta - np.dot(np.linalg.inv(deri_2), deri_1)
 		print(ret)
 		if (Newton.close(beta, ret)):
 			return ret
@@ -49,6 +53,8 @@ class Newton():
 	def solve(mat, vec):
 		Newton.m = mat.shape[0]
 		Newton.n = mat.shape[1]
+		Newton.cnt = 0
+
 		Newton.mat = mat
 		Newton.vec = vec
 		beta = np.zeros((Newton.n))

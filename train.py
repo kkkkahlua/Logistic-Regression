@@ -3,11 +3,13 @@ import math
 from OvR import OvR
 from smote import Smote
 from newton import Newton
+from descent import Descent
+from gradascent import GradAscent
+from dampednewton import DampedNewton
 
 class Train():
 	m = 4935
 	n = 11
-	EPS = 0.0001
 
 	matx = np.zeros((m, n))
 	label = np.zeros((m), dtype=int)
@@ -45,14 +47,13 @@ class Train():
 
 		mat = ret2[0]
 		vec = ret2[1]
-
-		print(mat.shape)
 		
-		beta = Newton.solve(mat, vec)
-	#	beta = np.zeros((self.n))
+	#	beta = Newton.solve(mat, vec)
 
-	#	beta = self.calc_deri_1(beta)
-	#	print(beta)
-	#	mat = self.calc_deri_2(beta)
-	#	print(mat)
-	#	print(self.recursion(beta))
+		beta = DampedNewton.solve(mat, vec)
+
+		print('beta', beta)
+
+		#beta = GradAscent.solve(mat, vec)
+
+		return beta

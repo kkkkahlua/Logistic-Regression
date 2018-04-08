@@ -4,7 +4,7 @@ import math
 import random
 
 class Smote():
-	k = 5
+	k = 10
 
 	def dist(v1, v2, n):
 		sum = 0
@@ -15,9 +15,16 @@ class Smote():
 	def kNearestNeighbours(mat, r, c, cur):
 		heapq = []
 		for i in range(r):
-			if i == cur:
-				continue
 			dis = Smote.dist(mat[i], mat[cur], c)
+			if dis == 0:
+				continue
+			flag = False
+			for j in range(len(heapq)):
+				if (mat[heapq[j][1]] == mat[i]).all():
+					flag = True
+					break
+			if flag:
+				continue
 			if len(heapq) < Smote.k:
 				heappush(heapq, (-dis, i))
 			elif dis < -heapq[0][0]:
@@ -45,10 +52,8 @@ class Smote():
 
 		for i in range(T):
 			vec = Smote.kNearestNeighbours(mat, T, n, i)
-			Smote.pupulate(ret, mat, tot, i, vec, N, n)
+			Smote.pupulate(ret, mat, tot, i, vec, N, n)	
 			tot += N
-
-	#	print(ret[1:10])
 
 		return ret
 
@@ -62,14 +67,22 @@ class Smote():
 		vec = np.hstack((np.ones((nump), dtype=int), np.zeros((numn), dtype=int)))
 		
 		if (nump > numn):
-			ret = Smote.overSample(matn, numn, int(nump/numn)-1, c)
+			ret = Smote.overSample(matn, numn, int(nump/(2*numn))-1, c)
 			num = ret.shape[0]
 			mat = np.vstack((mat, ret))
 			vec = np.hstack((vec, np.zeros((num), dtype=int)))
 		elif (nump < numn):
-			ret = Smote.overSample(matp, nump, int(numn/nump)-1, c)
+			ret = Smote.overSample(matp, nump, int(numn/(2*nump))-1, c)
 			num = ret.shape[0]
 			mat = np.vstack((mat, ret))
 			vec = np.hstack((vec, np.ones((num), dtype=int)))
-
+		'''
+		fout = open('F:\\data\\ml\\2\\train_4.txt', 'w')
+		for i in range(mat.shape[0]):
+			fout.write(str(mat[i]))
+			fout.write('\n')
+		for i in range(mat.shape[0]):
+			fout.write(str(vec[i]))
+			fout.write('\n')
+		'''
 		return (mat, vec)
