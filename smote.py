@@ -48,6 +48,28 @@ class Smote():
 			Smote.pupulate(ret, mat, tot, i, vec, N, n)
 			tot += N
 
-		print(ret[1:10])
+	#	print(ret[1:10])
 
 		return ret
+
+	def genNew(matp, matn, c):
+		mat = np.vstack((matp, matn))
+
+		nump = matp.shape[0]
+		numn = matn.shape[0]
+		print(nump)
+		print(numn)
+		vec = np.hstack((np.ones((nump), dtype=int), np.zeros((numn), dtype=int)))
+		
+		if (nump > numn):
+			ret = Smote.overSample(matn, numn, int(nump/numn)-1, c)
+			num = ret.shape[0]
+			mat = np.vstack((mat, ret))
+			vec = np.hstack((vec, np.zeros((num), dtype=int)))
+		elif (nump < numn):
+			ret = Smote.overSample(matp, nump, int(numn/nump)-1, c)
+			num = ret.shape[0]
+			mat = np.vstack((mat, ret))
+			vec = np.hstack((vec, np.ones((num), dtype=int)))
+
+		return (mat, vec)
