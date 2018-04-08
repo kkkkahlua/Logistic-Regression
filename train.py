@@ -1,17 +1,20 @@
 import numpy as np
 import math
+from OvR import OvR
 
 class Train():
 	m = 4935
 	n = 11
 	EPS = 0.0001
+
 	matx = np.zeros((m, n))
 	label = np.zeros((m), dtype=int)
 
-	def __init__(self):
+	pos = 0
 
+	def __init__(self):
 		self.matx[:,10] = 1
-		pass
+		self.input()
 
 	def input(self):
 		fin = open('F:\\data\\ml\\2\\page_blocks_train_feature.txt', 'r')
@@ -58,25 +61,42 @@ class Train():
 				return False
 		return True
 
-	def recur(self, beta):
+	def recursion(self, beta):
 		ret = beta - np.dot(self.calc_deri_2(beta).T, self.calc_deri_1(beta))
 		if (self.close(beta, ret)):
 			return ret
 		else:
-			return self.recur(ret)
+			return self.recursion(ret)
 
-	def solve(self):
-		self.input()
-
+	def solve(self, pos):
 		'''
 		for x in range(50):
 			print(self.matx[x])
 			print(self.label[x])
 		'''
+		self.pos = pos
 
-		beta = np.zeros((self.n))
+		ret = OvR.separate(self.matx, self.label, pos, self.m, self.n)
+		matp = ret[0]
+		nump = ret[1]
+		matn = ret[2]
+		numn = ret[3]
+
+		'''
+		if (nump > numn):
+			matn = Smote.overSample(matn, numn) 
+		elif (nump < numn):
+			matp = Smote.overSample(matp, numn)
+		'''
+		
+		print(nump)
+		print(numn)	
+		print(matp[0:3])
+		
+		#beta = np.zeros((self.n))
+
 	#	beta = self.calc_deri_1(beta)
 	#	print(beta)
 	#	mat = self.calc_deri_2(beta)
 	#	print(mat)
-		print(self.recur(beta))
+	#	print(self.recursion(beta))

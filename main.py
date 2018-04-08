@@ -3,4 +3,5 @@ import numpy as np
 
 train = Train()
 
-beta = train.solve()
+for i in range(5):
+	beta = train.solve(i+1)
