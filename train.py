@@ -1,6 +1,7 @@
 import numpy as np
 import math
 from OvR import OvR
+from smote import Smote
 
 class Train():
 	m = 4935
@@ -69,29 +70,35 @@ class Train():
 			return self.recursion(ret)
 
 	def solve(self, pos):
-		'''
-		for x in range(50):
-			print(self.matx[x])
-			print(self.label[x])
-		'''
 		self.pos = pos
 
 		ret = OvR.separate(self.matx, self.label, pos, self.m, self.n)
-		matp = ret[0]
-		nump = ret[1]
-		matn = ret[2]
-		numn = ret[3]
 
-		'''
-		if (nump > numn):
-			matn = Smote.overSample(matn, numn) 
-		elif (nump < numn):
-			matp = Smote.overSample(matp, numn)
-		'''
-		
+
+		matp = ret[0]
+		matn = ret[1]
+		mat = np.vstack((matp, matn))
+
+		nump = matp.shape[0]
+		numn = matn.shape[0]
 		print(nump)
-		print(numn)	
-		print(matp[0:3])
+		print(numn)
+		vec = np.hstack((np.ones((nump), dtype=int), np.zeros((numn), dtype=int)))
+		
+		if (nump > numn):
+			ret = Smote.overSample(matn, numn, int(nump/numn)-1, self.n)
+			num = ret.shape[0]
+			mat = np.vstack((mat, ret))
+			vec = np.hstack((vec, np.zeros((num), dtype=int)))
+		elif (nump < numn):
+			ret = Smote.overSample(matp, nump, int(numn/nump)-1, self.n)
+			num = ret.shape[0]
+			mat = np.vstack((mat, ret))
+			vec = np.hstack((vec, np.ones((num), dtype=int)))
+		
+		#print(mat)
+		#print(vec[300])
+		print(mat.shape)
 		
 		#beta = np.zeros((self.n))
 
