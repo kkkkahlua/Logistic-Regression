@@ -44,7 +44,7 @@ class Smote():
 
 
 	def overSample(mat, T, N, n):
-		if N == 0:
+		if N <= 0:
 			return mat
 
 		ret = np.zeros(((T*N), n))
@@ -67,12 +67,12 @@ class Smote():
 		vec = np.hstack((np.ones((nump), dtype=int), np.zeros((numn), dtype=int)))
 		
 		if (nump > numn):
-			ret = Smote.overSample(matn, numn, int(nump/(2*numn))-1, c)
+			ret = Smote.overSample(matn, numn, int(nump/(3*numn))-1, c)
 			num = ret.shape[0]
 			mat = np.vstack((mat, ret))
 			vec = np.hstack((vec, np.zeros((num), dtype=int)))
 		elif (nump < numn):
-			ret = Smote.overSample(matp, nump, int(numn/(2*nump))-1, c)
+			ret = Smote.overSample(matp, nump, int(numn/(3*nump))-1, c)
 			num = ret.shape[0]
 			mat = np.vstack((mat, ret))
 			vec = np.hstack((vec, np.ones((num), dtype=int)))

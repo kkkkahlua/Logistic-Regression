@@ -44,7 +44,8 @@ class Descent():
 	def solve(mat, vec):
 		Descent.m = mat.shape[0]
 		Descent.n = mat.shape[1]
+		print(mat)
 		Descent.mat = mat
 		Descent.vec = vec
 
-		return Descent.iteration()
+	#	return Descent.iteration()
