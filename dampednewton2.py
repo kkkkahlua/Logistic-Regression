@@ -16,59 +16,53 @@ class DampedNewton():
 	vec = np.array((0))
 
 	def calc_p1(x, beta):
-		#print('x', x, 'beta', beta)
-		temp = np.dot(x, beta)
-		if (temp >= 675):
-			return 1.0
-		temp = math.exp(temp)
-		return temp / (1+temp)
+		tmp = math.exp(np.dot(beta, x))
+		return tmp / (1 + tmp)
 
 	def calc_deri_1(beta):
-		vec = np.zeros((DampedNewton.n))
+		grad=np.zeros((DampedNewton.n))
 		for i in range(DampedNewton.m):
-			#print(DampedNewton.calc_p1(DampedNewton.mat[i], beta))
-			vec += DampedNewton.mat[i] * (DampedNewton.calc_p1(DampedNewton.mat[i], beta) - DampedNewton.vec[i])
-		return vec
+		    grad+=np.dot((DampedNewton.calc_p1(beta,DampedNewton.mat[i])-DampedNewton.vec[i]),DampedNewton.mat[i])
+		return grad
 
 	def calc_deri_2(beta):
-		mat = np.zeros((DampedNewton.n, DampedNewton.n))
-		c = np.zeros((DampedNewton.n, 1))
-		r = np.zeros((1, DampedNewton.n))
+		Hessian=np.zeros((DampedNewton.n,DampedNewton.n))
 		for i in range(DampedNewton.m):
-			c[:,0] = DampedNewton.mat[i]
-			r[0:] = DampedNewton.mat[i]
-			p1 = DampedNewton.calc_p1(DampedNewton.mat[i], beta)
-		#	print(p1)
-			mat += np.dot(c, r) * p1 * (1-p1)
-		return mat
+			p1=DampedNewton.calc_p1(beta,DampedNewton.mat[i])
+			Hessian+=(np.dot(DampedNewton.mat[i].T,DampedNewton.mat[i])*p1*(1-p1))
+			#print(Hessian)
+		return Hessian
 
 	def close(x, y):
 		return abs(x-y).all() < DampedNewton.EPS
 
 	def ell(beta):
-		ret = 0
+		ret=0
 		for i in range(DampedNewton.m):
-			temp = np.dot(beta, DampedNewton.mat[i])
-			ret += -DampedNewton.vec[i] * temp + math.log(1+pow(math.e, temp), math.e)
-		return ret
+			ret+=(-DampedNewton.vec[i]*np.dot(beta,DampedNewton.mat[i])+math.log(1+math.exp(np.dot(beta,DampedNewton.mat[i]))))
+		return ret		
+
+	def get_alpha(beta,r,grad):
+		delta = 0.5
+		sigma = 0.25
+		m=0
+		while True:
+			tmp=delta**m
+			if DampedNewton.ell(beta+tmp*r)<=\
+					DampedNewton.ell(beta)+np.dot(sigma*tmp,np.dot(grad,r)):
+				return delta**m
+			else:
+				m += 1
 
 	def recursion(beta, prev):
 		deri_1 = DampedNewton.calc_deri_1(beta)
 		deri_2 = DampedNewton.calc_deri_2(beta)
+		print(deri_2)
 		r = -np.dot(np.linalg.inv(deri_2), deri_1)
 
-		m = 0
-		while 1:
-			if m > DampedNewton.UPPER:
-				return prev
-			if not DampedNewton.ell(beta+pow(DampedNewton.DELTA, m)) <= DampedNewton.ell(beta) + DampedNewton.SIGMA * pow(DampedNewton.DELTA, m) * np.dot(deri_1, r):
-				break
-			else:
-				m += 1
+		ret = beta + DampedNewton.get_alpha(beta, r, deri_1) * r
 
-		ret = beta + pow(DampedNewton.DELTA, m) * r
-
-		print(ret)
+		print(DampedNewton.norm(ret))
 		if (DampedNewton.close(beta, ret)):
 			return ret
 		else:
@@ -89,14 +83,14 @@ class DampedNewton():
 			norm = DampedNewton.norm(deri_1)		
 			if DampedNewton.norm(deri_1) < DampedNewton.EPS:
 				return beta
-			print(beta)
+			#print(beta)
 			print(norm)
 
 			m = 0
 			while 1:
 				if m > DampedNewton.UPPER:
 					return prev
-				if not DampedNewton.ell(beta+pow(DampedNewton.DELTA, m)) <= DampedNewton.ell(beta) + DampedNewton.SIGMA * pow(DampedNewton.DELTA, m) * np.dot(deri_1, r):
+				if not DampedNewton.ell(beta+pow(DampedNewton.DELTA, m) * r) <= DampedNewton.ell(beta) + DampedNewton.SIGMA * pow(DampedNewton.DELTA, m) * np.dot(deri_1, r):
 					break
 				else:
 					m += 1
@@ -111,11 +105,12 @@ class DampedNewton():
 
 		DampedNewton.mat = mat
 		DampedNewton.vec = vec
-		'''
-		return DampedNewton.iteration()
-		'''		
+
+#		return DampedNewton.iteration()
+		
 		beta = np.zeros((DampedNewton.n))
 		print(mat.shape)
 	#	print(beta)
 		return DampedNewton.recursion(beta, beta)
+		
 		

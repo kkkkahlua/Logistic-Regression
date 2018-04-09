@@ -1,4 +1,5 @@
 import numpy as np
+from normalize import Normalize
 
 class Test():
 	m = 538
@@ -19,6 +20,8 @@ class Test():
 			list = line.strip('\n').split(' ')
 			self.matx[row][0:10] = list
 			row += 1
+		Normalize.normalize(self.matx)
+
 		fin = open('F:\\data\\ml\\2\\page_blocks_test_label.txt', 'r')
 		lines = fin.readlines()
 		row = 0
@@ -28,11 +31,11 @@ class Test():
 			row += 1
 
 	def predict(self, beta, k):
+		ans = np.zeros((k))
 		for i in range(self.m):
 			for type in range(k):
-				if np.dot(self.matx[i], beta[type]) > 0:
-					self.labelp[i] = type+1
-					break
+				ans[type] = np.dot(self.matx[i], beta[type])
+			self.labelp[i] = np.argmax(ans)+1
 
 		rel = np.zeros((k, 2, 2), dtype = int)
 		for i in range(self.m):
