@@ -2,11 +2,7 @@ import numpy as np
 import math
 from OvR import OvR
 from smote import Smote
-from newton import Newton
 from descent import Descent
-from gradascent import GradAscent
-from dampednewton import DampedNewton
-from logistic import Logistic
 from normalize import Normalize
 
 class Train():
@@ -46,27 +42,11 @@ class Train():
 
 		ret1 = OvR.separate(self.matx, self.label, pos, self.m, self.n)
 
-		ret2 = Smote.genNew(ret1[0], ret1[1], self.n)
-
-		mat = ret2[0]
-		vec = ret2[1]
+		mat, vec = Smote.genNew(ret1[0], ret1[1], self.n)
 	
 		beta = Descent.solve(mat, vec)
 
-	#	beta = DampedNewton.solve(mat, vec)
-
-	#	beta = Newton.solve(mat, vec)
-
-	#	beta = DampedNewton.solve(mat, vec)
-		'''
-		vecm = np.zeros((vec.shape[0], 1))
-		vecm[:,0] = vec
-		logistic = Logistic(mat, vecm)
-		beta = logistic.Newton()
-
 		print('beta', beta)
-		
-		#beta = GradAscent.solve(mat, vec)
-		'''
+
 		return beta
 		

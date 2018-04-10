@@ -62,8 +62,7 @@ class Smote():
 
 		nump = matp.shape[0]
 		numn = matn.shape[0]
-		print(nump)
-		print(numn)
+
 		vec = np.hstack((np.ones((nump), dtype=int), np.zeros((numn), dtype=int)))
 		
 		if (nump > numn):
@@ -76,13 +75,5 @@ class Smote():
 			num = ret.shape[0]
 			mat = np.vstack((mat, ret))
 			vec = np.hstack((vec, np.ones((num), dtype=int)))
-		'''
-		fout = open('F:\\data\\ml\\2\\train_4.txt', 'w')
-		for i in range(mat.shape[0]):
-			fout.write(str(mat[i]))
-			fout.write('\n')
-		for i in range(mat.shape[0]):
-			fout.write(str(vec[i]))
-			fout.write('\n')
-		'''
+
 		return (mat, vec)

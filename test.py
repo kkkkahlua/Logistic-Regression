@@ -55,6 +55,7 @@ class Test():
 						rel[j][1][1] += 1
 
 		for i in range(k):
+			print('class %d' % (i+1))
 			print(rel[i])
 			Precision = rel[i][0][0] / (rel[i][0][0] + rel[i][1][0])
 			Recall = rel[i][0][0] / (rel[i][0][0] + rel[i][0][1])

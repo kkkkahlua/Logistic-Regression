@@ -13,13 +13,7 @@ def main():
 
 	for i in range(k):
 		beta[i] = train.solve(i+1)
-		print(beta[i])
 
-	'''
-	beta[0] = train.solve(4)
-
-	print(beta[0])
-	'''
 	test.predict(beta, k)
 
 main()
