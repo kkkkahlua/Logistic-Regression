@@ -27,7 +27,7 @@ class DampedNewton():
 		vec = np.zeros((DampedNewton.n))
 		for i in range(DampedNewton.m):
 			#print(DampedNewton.calc_p1(DampedNewton.mat[i], beta))
-			vec += DampedNewton.mat[i] * (DampedNewton.calc_p1(DampedNewton.mat[i], beta) - DampedNewton.vec[i])
+			vec += np.dot(DampedNewton.mat[i], DampedNewton.calc_p1(DampedNewton.mat[i], beta) - DampedNewton.vec[i])
 		return vec
 
 	def calc_deri_2(beta):
@@ -39,7 +39,7 @@ class DampedNewton():
 			r[0:] = DampedNewton.mat[i]
 			p1 = DampedNewton.calc_p1(DampedNewton.mat[i], beta)
 		#	print(p1)
-			mat += np.dot(c, r) * p1 * (1-p1)
+			mat += np.dot(p1*(1-p1), np.dot(c, r))
 		return mat
 
 	def close(x, y):
@@ -49,7 +49,7 @@ class DampedNewton():
 		ret = 0
 		for i in range(DampedNewton.m):
 			temp = np.dot(beta, DampedNewton.mat[i])
-			ret += -DampedNewton.vec[i] * temp + math.log(1+pow(math.e, temp), math.e)
+			ret += -np.dot(temp, DampedNewton.vec[i])+ math.log(1+pow(math.e, temp), math.e)
 		return ret
 
 	def recursion(beta, prev):
@@ -66,7 +66,7 @@ class DampedNewton():
 			else:
 				m += 1
 
-		ret = beta + pow(DampedNewton.DELTA, m) * r
+		ret = beta + np.dot(pow(DampedNewton.DELTA, m), r)
 
 		print(ret)
 		if (DampedNewton.close(beta, ret)):

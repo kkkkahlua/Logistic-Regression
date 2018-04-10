@@ -10,7 +10,9 @@ class Logistic:
         self.labels=labels
 
     def get_p1(self,beta,index):
-        tmp = exp(np.dot(beta.T,np.mat(self.samples[index].T)))
+        v2 = np.zeros((1, self.n_attrs))
+        v2[0] = self.samples[index]
+        tmp = exp(np.dot(v2, beta))
         return tmp / (1 + tmp)
 
     def get_p0(self,beta,index):
@@ -19,7 +21,9 @@ class Logistic:
     def get_grad(self,beta):
         grad=np.zeros((self.n_attrs,1))
         for i in range(self.n_samples):
-            grad+=np.dot((self.get_p1(beta,i)-self.labels[i][0]),self.samples[i].T)
+            fact = self.get_p1(beta,i)-self.labels[i][0]
+            print(fact.shape)
+            grad+=fact*self.samples[i].T
         return grad
 
     def get_Hessian(self,beta):

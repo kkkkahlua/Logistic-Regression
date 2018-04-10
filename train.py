@@ -51,9 +51,9 @@ class Train():
 		mat = ret2[0]
 		vec = ret2[1]
 	
-	#	beta = Descent.solve(mat, vec)
+		beta = Descent.solve(mat, vec)
 
-		beta = DampedNewton.solve(mat, vec)
+	#	beta = DampedNewton.solve(mat, vec)
 
 	#	beta = Newton.solve(mat, vec)
 
@@ -65,7 +65,8 @@ class Train():
 		beta = logistic.Newton()
 
 		print('beta', beta)
-
+		
 		#beta = GradAscent.solve(mat, vec)
 		'''
 		return beta
+		
