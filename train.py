@@ -2,6 +2,7 @@ import numpy as np
 import math
 from OvR import OvR
 from smote import Smote
+from borderlinesmote import BorderlineSmote
 from descent import Descent
 from normalize import Normalize
 
@@ -43,6 +44,7 @@ class Train():
 		ret1 = OvR.separate(self.matx, self.label, pos, self.m, self.n)
 
 		mat, vec = Smote.genNew(ret1[0], ret1[1], self.n)
+#		mat, vec = BorderlineSmote.genNew(ret1[0], ret1[1], self.n)		
 	
 		beta = Descent.solve(mat, vec)
 

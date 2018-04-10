@@ -12,7 +12,7 @@ def main():
 	beta = np.zeros((k, n))
 
 	for i in range(k):
-		beta[i] = train.solve(i+1)
+		beta[i] = train.solve(i+1)	
 
 	test.predict(beta, k)
 
