@@ -1,39 +1,10 @@
 import numpy as np
-from heapq import heappush, heappop
 import math
 import random
+from knn import KNN
 
 class Smote():
 	k = 10
-
-	def dist(v1, v2, n):
-		sum = 0
-		for i in range(n):
-			sum += math.pow(v1[i]-v2[i], 2)
-		return sum
-
-	def kNearestNeighbours(mat, r, c, cur):
-		heapq = []
-		for i in range(r):
-			dis = Smote.dist(mat[i], mat[cur], c)
-			if dis == 0:
-				continue
-			flag = False
-			for j in range(len(heapq)):
-				if (mat[heapq[j][1]] == mat[i]).all():
-					flag = True
-					break
-			if flag:
-				continue
-			if len(heapq) < Smote.k:
-				heappush(heapq, (-dis, i))
-			elif dis < -heapq[0][0]:
-				heappop(heapq)
-				heappush(heapq, (-dis, i))
-		vec = np.zeros((Smote.k), dtype=int)
-		for i in range(Smote.k):
-			vec[i] = heapq[i][1]
-		return vec
 
 	def pupulate(ret, mat, num, cur, vec, N, c):
 		for i in range(N):
@@ -51,7 +22,7 @@ class Smote():
 		tot = 0
 
 		for i in range(T):
-			vec = Smote.kNearestNeighbours(mat, T, n, i)
+			vec = KNN.kNearestNeighbours(mat, T, n, i)
 			Smote.pupulate(ret, mat, tot, i, vec, N, n)	
 			tot += N
 

@@ -54,10 +54,16 @@ class Test():
 					else:
 						rel[j][1][1] += 1
 
+		sum1 = 0
+		sum2 = 0
 		for i in range(k):
 			print('class %d' % (i+1))
 			print(rel[i])
+			sum1 += rel[i][0][0]
+			sum2 += rel[i][0][0] + rel[i][1][0]
 			Precision = rel[i][0][0] / (rel[i][0][0] + rel[i][1][0])
 			Recall = rel[i][0][0] / (rel[i][0][0] + rel[i][0][1])
 			print('Precision: %.3f%%' % (Precision*100))
 			print('Recall: %.3f%%' % (Recall*100))
+
+		print('Total Precision: %.3f%%' % (sum1 / sum2 * 100))

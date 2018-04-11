@@ -5,6 +5,7 @@ from smote import Smote
 from borderlinesmote import BorderlineSmote
 from descent import Descent
 from normalize import Normalize
+from easyensemble import EasyEnsemble
 
 class Train():
 	m = 4935
@@ -45,9 +46,16 @@ class Train():
 
 		mat, vec = Smote.genNew(ret1[0], ret1[1], self.n)
 #		mat, vec = BorderlineSmote.genNew(ret1[0], ret1[1], self.n)		
-	
+			
 		beta = Descent.solve(mat, vec)
-
+		'''
+		ensembleN = 5
+		beta = np.zeros((self.n))
+		for i in range(ensembleN):
+			mat, vec = EasyEnsemble.genNew(ret1[0], ret1[1], self.n)
+			beta = beta + Descent.solve(mat, vec)
+		beta = beta / ensembleN
+		'''
 		print('beta', beta)
 
 		return beta

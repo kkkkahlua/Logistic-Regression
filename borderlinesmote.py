@@ -2,44 +2,19 @@ import numpy as np
 from heapq import heappush, heappop
 import math
 import random
+from knn import KNN
 
 class BorderlineSmote():
 	k = 10
 
-	def dist(v1, v2, n):
-		sum = 0
-		for i in range(n):
-			sum += math.pow(v1[i]-v2[i], 2)
-		return sum
-
-	def kNearestNeighbours(mat, r, c, cur):
-		heapq = []
-		for i in range(r):
-			dis = BorderlineSmote.dist(mat[i], mat[cur], c)
-			if dis == 0:
-				continue
-			flag = False
-			for j in range(len(heapq)):
-				if (mat[heapq[j][1]] == mat[i]).all():
-					flag = True
-					break
-			if flag:
-				continue
-			if len(heapq) < BorderlineSmote.k:
-				heappush(heapq, (-dis, i))
-			elif dis < -heapq[0][0]:
-				heappop(heapq)
-				heappush(heapq, (-dis, i))
-		vec = np.zeros((BorderlineSmote.k), dtype=int)
-		for i in range(BorderlineSmote.k):
-			vec[i] = heapq[i][1]
-		return vec
-
-	def pupulate(ret, mat, num, cur, vec, N, c):
+	def pupulate(ret, mat, num, cur, vec, N, c, set1):
 		for i in range(N):
 			idx = vec[random.randint(0, BorderlineSmote.k-1)]
 			for j in range(c):
+				flag = idx in set1
 				fac = random.random()
+				if not flag:
+					fac = fac / 2
 				ret[num+i][j] = mat[cur][j] + fac * (mat[idx][j] - mat[cur][j])
 
 	def sampleType(v, mat, vec):
@@ -60,14 +35,17 @@ class BorderlineSmote():
 		danger = 0
 		choice = np.zeros(T, dtype = int)
 
+		set1 = set()
+
 		for i in range(T):
 			if i % 20 == 0:
 				print('%d of %d (in finding danger set...)' % (i, T))
-			vec = BorderlineSmote.kNearestNeighbours(matall, matall.shape[0], n, i)
+			vec = KNN.kNearestNeighbours(matall, matall.shape[0], n, i)
 			typ = BorderlineSmote.sampleType(vec, matall, vecall)
 			if typ == 1:
 				choice[danger] = i
 				danger += 1
+				set1.add(i)
 
 		N = int(tar / danger)
 		tar = N * danger
@@ -75,8 +53,8 @@ class BorderlineSmote():
 		tot = 0		
 
 		for i in range(danger):
-			vec = BorderlineSmote.kNearestNeighbours(mat, T, n, choice[i])
-			BorderlineSmote.pupulate(ret, mat, tot, i, vec, N, n)
+			vec = KNN.kNearestNeighbours(mat, T, n, choice[i])
+			BorderlineSmote.pupulate(ret, mat, tot, i, vec, N, n, set1)
 			tot += N
 
 		return ret
